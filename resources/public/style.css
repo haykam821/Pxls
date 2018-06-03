@@ -41,6 +41,23 @@ a, a:hover, a:visited, a:active {
     color: inherit;
 }
 
+table, tr, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 3px;
+    table-layout: fixed;
+    margin: 0 auto;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
+    user-select: none;
+}
+tr > td:nth-child(3) {
+    color: red;
+    font-weight: 600;
+}
+
 #reconnecting {
     position: fixed;
     display: none;

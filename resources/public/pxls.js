@@ -2408,6 +2408,8 @@ window.App = (function () {
                     }
                 },
                 init: function () {
+                    $("#keybinds").click(self.showSetupAlert);
+
                     window.addEventListener("keydown", event => {
                         const bind = self.binds.keyboard[event.code];
                         if (bind && self.actions[bind]) {
@@ -2444,13 +2446,32 @@ window.App = (function () {
                             });
                         }
                     });
+                },
+                showSetupAlert: function () {
+                    const rows = Object.keys(self.binds.keyboard).map(key => {
+                        return `<td>${key}</td> <td>${self.binds.keyboard[key]}</td> <td>&times;</td>`;
+                    });
+
+                    alert.showElem(`
+                        <table>
+                            <tr>
+                                <th>Keybind</th>
+                                <th>Action</th>
+                                <th>Delete</th>
+                            </tr>
+                            <tr>
+                            ${rows.join("</tr><tr>")}
+                            </tr>
+                        </table>
+                    `);
                 }
             };
 
 
             return {
                 init: self.init,
-                binds: self.binds
+                binds: self.binds,
+                setup: self.showSetupAlert
             }
         })();
     // init progress
@@ -2498,6 +2519,9 @@ window.App = (function () {
         },
         alert: function(s) {
             alert.show($('<span>').text(s).html());
+        },
+        showSetupAlert: function() {
+            keybinds.showSetupAlert();
         },
         doPlace: function() {
             ban.me();
