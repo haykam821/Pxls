@@ -2374,28 +2374,28 @@ window.App = (function () {
                 },
                 binds: {
                     "keyboard": {
-                        "KeyW": "panUp",
-                        "ArrowUp": "panUp",
-                        "KeyA": "panLeft",
-                        "ArrowLeft": "panLeft",
-                        "KeyS": "panDown",
-                        "ArrowDown": "panDown",
-                        "KeyD": "panRight",
-                        "ArrowRight": "panRight",
-                        "KeyQ": "zoomOut",
-                        "Minus": "zoomOut",
-                        "KeyE": "zoomIn",
-                        "Equal": "zoomIn",
-                        "KeyP": "snapshot",
-                        "KeyL": "togglePan",
-                        "KeyJ": "paletteLeft",
-                        "KeyK": "paletteRight",
-                        "KeyG": "toggleGrid",
-                        "KeyO": "clearHeatmap",
-                        "KeyH": "toggleHeatmap",
-                        "KeyV": "toggleTemplate",
-                        "PageUp": "increaseTemplateOpacity",
-                        "PageDown": "decreaseTemplateOpacity"
+                        "Key87": "panUp",
+                        "Key38": "panUp",
+                        "Key65": "panLeft",
+                        "Key37": "panLeft",
+                        "Key83": "panDown",
+                        "Key40": "panDown",
+                        "Key68": "panRight",
+                        "Key39": "panRight",
+                        "Key81": "zoomOut",
+                        "Key189": "zoomOut",
+                        "Key69": "zoomIn",
+                        "Key187": "zoomIn",
+                        "Key80": "snapshot",
+                        "Key76": "togglePan",
+                        "Key74": "paletteLeft",
+                        "Key75": "paletteRight",
+                        "Key71": "toggleGrid",
+                        "Key79": "clearHeatmap",
+                        "Key72": "toggleHeatmap",
+                        "Key86": "toggleTemplate",
+                        "Key33": "increaseTemplateOpacity",
+                        "Key34": "decreaseTemplateOpacity"
                     },
                     "gamepad_standard": {
                         // a standard gamepad...
@@ -2411,7 +2411,7 @@ window.App = (function () {
                     $("#keybinds").click(self.showSetupAlert);
 
                     window.addEventListener("keydown", event => {
-                        const bind = self.binds.keyboard[event.code];
+                        const bind = self.binds.keyboard["Key" + event.keyCode];
                         if (bind && self.actions[bind]) {
                             self.actions[bind](event);
                         }
