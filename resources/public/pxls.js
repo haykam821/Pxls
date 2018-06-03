@@ -1119,11 +1119,6 @@ window.App = (function () {
                     $("#heatmapClearable").change(function () {
                         ls.set("hm_clearable", this.checked);
                     });
-                    $(window).keydown(function (evt) {
-                        if (evt.key == "o" || evt.key == "O" || evt.which == 79) { //O key
-                            self.clear();
-                        }
-                    });
                 },
                 show: function () {
                     self.is_shown = false;
@@ -1166,13 +1161,6 @@ window.App = (function () {
                             self.show();
                         } else {
                             self.hide();
-                        }
-                    });
-
-                    $(window).keydown(function (e) {
-                        if (e.key == "h" || e.key == "H" || e.which == 72) { // h key
-                            self.toggle();
-                            $("#heatmaptoggle")[0].checked = ls.get("heatmap");
                         }
                     });
                 }
@@ -1389,26 +1377,6 @@ window.App = (function () {
                         if (evt.ctrlKey && self.options.use) {
                             evt.preventDefault();
                             self.elements.template.css("pointer-events", "initial");
-                        }
-                        let newOpacity = 0;
-                        switch(evt.key || evt.which) {
-                            case "PageUp":
-                            case 33:
-                                newOpacity = Math.min(1, self.options.opacity+0.1);
-                                self._update({opacity: newOpacity});
-                                break;
-                            case "PageDown":
-                            case 34:
-                                newOpacity = Math.max(0, self.options.opacity-0.1);
-                                self._update({opacity: newOpacity});
-                                break;
-                            case "v":
-                            case "V":
-                            case 86:
-                                self._update({
-                                    use: !self.options.use
-                                });
-                                break;
                         }
                     }).on("keyup blur", function (evt) {
                         if (self.options.use) {
@@ -2382,6 +2350,26 @@ window.App = (function () {
                     toggleGrid: function () {
                         $("#gridtoggle")[0].checked = !$("#gridtoggle")[0].checked;
                         $("#gridtoggle").trigger("change");
+                    },
+                    clearHeatmap: function () {
+                        heatmap.clear();
+                    },
+                    toggleHeatmap: function () {
+                        heatmap.toggle();
+                        $("#heatmaptoggle")[0].checked = ls.get("heatmap");
+                    },
+                    toggleTemplate: function() {
+                        self._update({
+                            use: !self.options.use
+                        });
+                    },
+                    increaseTemplateOpacity: function() {
+                        newOpacity = Math.min(1, template.options.opacity + 0.1);
+                        template._update({ opacity: newOpacity });
+                    },
+                    decreaseTemplateOpacity: function() {
+                        newOpacity = Math.max(0, template.options.opacity - 0.1);
+                        template._update({ opacity: newOpacity });
                     }
                 },
                 binds: {
@@ -2402,7 +2390,12 @@ window.App = (function () {
                         "KeyL": "togglePan",
                         "KeyJ": "paletteLeft",
                         "KeyK": "paletteRight",
-                        "KeyG": "toggleGrid"
+                        "KeyG": "toggleGrid",
+                        "KeyO": "clearHeatmap",
+                        "KeyH": "toggleHeatmap",
+                        "KeyV": "toggleTemplate",
+                        "PageUp": "increaseTemplateOpacity",
+                        "PageDown": "decreaseTemplateOpacity"
                     },
                     "gamepad_standard": {
                         // a standard gamepad...
