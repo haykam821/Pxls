@@ -2449,7 +2449,7 @@ window.App = (function () {
                 },
                 showSetupAlert: function () {
                     const rows = Object.keys(self.binds.keyboard).map(key => {
-                        return `<td>${key}</td> <td>${self.binds.keyboard[key]}</td> <td>&times;</td>`;
+                        return `<td><input type="text" placeholder="Default: ${key}" /></td> <td>${self.binds.keyboard[key]}</td> <td>&times;</td>`;
                     });
 
                     alert.showElem(`
