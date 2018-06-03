@@ -1025,7 +1025,8 @@ window.App = (function () {
                 centerOn: self.centerOn,
                 pan: self.pan,
                 getRenderBoard: self.getRenderBoard,
-                refresh: self.refresh
+                refresh: self.refresh,
+                allowDrag: self.allowDrag
             };
         })(),
         // heatmap init stuff
@@ -2337,7 +2338,7 @@ window.App = (function () {
                 show: self.show
             }
         })(),
-        keybinds = (function() {
+        keybinds = (function () {
             var self = {
                 actions: {
                     panUp: function () {
@@ -2405,10 +2406,10 @@ window.App = (function () {
                     },
                     "gamepad_standard": {
                         // a standard gamepad...
-                        "LeftStickUp": "panUp",
-                        "LeftStickLeft": "pawnLeft",
-                        "LeftStickDown": "panDown",
-                        "LeftStickRight": "panRight",
+                        "Stick0Up": "panUp",
+                        "Stick0Left": "panLeft",
+                        "Stick0Down": "panDown",
+                        "Stick0Right": "panRight",
                         "Button4": "zoomOut",
                         "Button5": "zoomIn"
                     }
@@ -2420,22 +2421,36 @@ window.App = (function () {
                             self.actions[bind](event);
                         }
                         board.update();
-
-                        window.requestAnimationFrame(self.gamepadLoop);
                     });
+
+                    setInterval(self.gamepadLoop, 150);
                 },
                 gamepadLoop: function () {
-                    const gamepad = navigator.getGamepads()[0];
-                    const binds = gamepad.mapping ? self.binds[`gamepad_${gamepad.mapping}`] : "gamepad_standard";
-                    
-                    gamepad.buttons.forEach((button, index) => {
-                        if (button.pressed && binds[`Button${index}`]) {
-                            console.log(button, index)
-                            self.actions[binds[`Button${index}`]](button);
+                    Array.from(navigator.getGamepads()).forEach(gamepad => {
+                        if (gamepad) {
+                            const binds = gamepad.mapping ? self.binds[`gamepad_${gamepad.mapping}`] : self.binds.gamepad_standard;
+
+                            gamepad.buttons.forEach((button, index) => {
+                                if (button.pressed && binds[`Button${index}`]) {
+                                    self.actions[binds[`Button${index}`]](button);
+                                    board.update();
+                                }
+                            });
+
+                            gamepad.axes.forEach((axis, index) => { 
+                                if (axis < -0.5 || axis > 0.5) {
+                                    const name = `Stick${Math.floor(index / 2)}`;
+                                    const directions = [["Left", "Right"], ["Up", "Down"]];
+
+                                    const trueName = name + directions[index % 2][axis < 0 ? 0 : 1];
+                                    if (binds[trueName]) {
+                                        self.actions[binds[trueName]](axis);
+                                        board.update();
+                                    }
+                                }
+                            });
                         }
                     });
-
-                    window.requestAnimationFrame(self.gamepadLoop);
                 }
             };
 
