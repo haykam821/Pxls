@@ -2403,7 +2403,15 @@ window.App = (function () {
                         "KeyK": "paletteRight",
                         "KeyG": "toggleGrid"
                     },
-                    "gamepad": {}
+                    "gamepad_standard": {
+                        // a standard gamepad...
+                        "LeftStickUp": "panUp",
+                        "LeftStickLeft": "pawnLeft",
+                        "LeftStickDown": "panDown",
+                        "LeftStickRight": "panRight",
+                        "Button4": "zoomOut",
+                        "Button5": "zoomIn"
+                    }
                 },
                 init: function () {
                     window.addEventListener("keydown", event => {
@@ -2412,9 +2420,26 @@ window.App = (function () {
                             self.actions[bind](event);
                         }
                         board.update();
+
+                        window.requestAnimationFrame(self.gamepadLoop);
                     });
+                },
+                gamepadLoop: function () {
+                    const gamepad = navigator.getGamepads()[0];
+                    const binds = gamepad.mapping ? self.binds[`gamepad_${gamepad.mapping}`] : "gamepad_standard";
+                    
+                    gamepad.buttons.forEach((button, index) => {
+                        if (button.pressed && binds[`Button${index}`]) {
+                            console.log(button, index)
+                            self.actions[binds[`Button${index}`]](button);
+                        }
+                    });
+
+                    window.requestAnimationFrame(self.gamepadLoop);
                 }
             };
+
+
             return {
                 init: self.init,
                 binds: self.binds
