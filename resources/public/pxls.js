@@ -589,85 +589,6 @@ window.App = (function () {
                         }
                     });
 
-                    $(document.body).on("keydown", function (evt) {
-                        switch(evt.key || evt.keyCode) {
-                            case "w":
-                            case "W":
-                            case "ArrowUp":
-                            case 87:
-                            case 38:
-                                self.pan.y += 100 / self.scale;
-                                break;
-                            case "d":
-                            case "D":
-                            case "ArrowRight":
-                            case 68:
-                            case 39:
-                                self.pan.x -= 100 / self.scale;
-                                break;
-                            case "s":
-                            case "S":
-                            case "ArrowDown":
-                            case 83:
-                            case 40:
-                                self.pan.y -= 100 / self.scale;
-                                break;
-                            case "a":
-                            case "A":
-                            case "ArrowLeft":
-                            case 65:
-                            case 37:
-                                self.pan.x += 100 / self.scale;
-                                break;
-                            case "e":
-                            case "E":
-                            case "=":
-                            case 187:
-                            case 69:
-                            case 171:
-                                self.nudgeScale(1);
-                                break;
-                            case "q":
-                            case "Q":
-                            case "-":
-                            case 189:
-                            case 81:
-                            case 173:
-                                self.nudgeScale(-1);
-                                break;
-                            case "p":
-                            case "P":
-                            case 80:
-                                self.save();
-                                break;
-                            case "l":
-                            case "L":
-                            case 76:
-                                self.allowDrag = !self.allowDrag;
-                                break;
-                            case "j":
-                            case "J":
-                            case 74:
-                                if (place.color < 1) {
-                                    place.switch(place.getPaletteRGB().length - 1);
-                                } else {
-                                    place.switch(place.color - 1);
-                                }
-                                break;
-                            case "k":
-                            case "K":
-                            case 75:
-                                if (place.color + 1 >= place.getPaletteRGB().length) {
-                                    place.switch(0);
-                                } else {
-                                    place.switch(place.color + 1);
-                                }
-                                break;
-                        }
-                        self.pannedWithKeys = true;
-                        self.update();
-                    });
-
                     self.elements.container[0].addEventListener("wheel", function(evt) {
                         if (!self.allowDrag) return;
                         var oldScale = self.scale;
@@ -1102,6 +1023,7 @@ window.App = (function () {
                 toScreen: self.toScreen,
                 save: self.save,
                 centerOn: self.centerOn,
+                pan: self.pan,
                 getRenderBoard: self.getRenderBoard,
                 refresh: self.refresh
             };
@@ -1518,12 +1440,6 @@ window.App = (function () {
                     if (ls.get("view_grid")) {
                         self.elements.grid.fadeToggle({duration: 100});
                     }
-                    $(document.body).on("keydown", function (evt) {
-                        if (evt.key == "g" || evt.key == "G" || evt.keyCode === 71) {
-                            $("#gridtoggle")[0].checked = !$("#gridtoggle")[0].checked;
-                            $("#gridtoggle").trigger("change");
-                        }
-                    });
                 },
                 update: function () {
                     var a = board.fromScreen(0, 0),
@@ -2420,6 +2336,89 @@ window.App = (function () {
                 init: self.init,
                 show: self.show
             }
+        })(),
+        keybinds = (function() {
+            var self = {
+                actions: {
+                    panUp: function () {
+                        board.pan.y += 100 / board.getScale();
+                    },
+                    panLeft: function () {
+                        board.pan.x += 100 / board.getScale();
+                    },
+                    panDown: function () {
+                        board.pan.y -= 100 / board.getScale();
+                    },
+                    panRight: function () {
+                        board.pan.x -= 100 / board.getScale();
+                    },
+                    zoomOut: function () {
+                        board.nudgeScale(-1);
+                    },
+                    zoomIn: function () {
+                        board.nudgeScale(1);
+                    },
+                    snapshot: function () {
+                        board.save();
+                    },
+                    togglePan: function () {
+                        board.allowDrag = !board.allowDrag;
+                    },
+                    paletteLeft: function () {
+                        if (place.color < 1) {
+                            place.switch(place.getPaletteRGB().length - 1);
+                        } else {
+                            place.switch(place.color - 1);
+                        }
+                    },
+                    paletteRight: function () {
+                        if (place.color + 1 >= place.getPaletteRGB().length) {
+                            place.switch(0);
+                        } else {
+                            place.switch(place.color + 1);
+                        }
+                    },
+                    toggleGrid: function () {
+                        $("#gridtoggle")[0].checked = !$("#gridtoggle")[0].checked;
+                        $("#gridtoggle").trigger("change");
+                    }
+                },
+                binds: {
+                    "keyboard": {
+                        "KeyW": "panUp",
+                        "ArrowUp": "panUp",
+                        "KeyA": "panLeft",
+                        "ArrowLeft": "panLeft",
+                        "KeyS": "panDown",
+                        "ArrowDown": "panDown",
+                        "KeyD": "panRight",
+                        "ArrowRight": "panRight",
+                        "KeyQ": "zoomOut",
+                        "Minus": "zoomOut",
+                        "KeyE": "zoomIn",
+                        "Equal": "zoomIn",
+                        "KeyP": "snapshot",
+                        "KeyL": "togglePan",
+                        "KeyJ": "paletteLeft",
+                        "KeyK": "paletteRight",
+                        "KeyG": "toggleGrid"
+                    },
+                    "gamepad": {}
+                },
+                init: function () {
+                    window.addEventListener("keydown", event => {
+                        const bind = self.binds.keyboard[event.code];
+                        if (bind && self.actions[bind]) {
+                            self.actions[bind](event);
+                        }
+                        board.update();
+                    });
+                }
+            };
+            return {
+                init: self.init,
+                binds: self.binds
+            }
         })();
     // init progress
     query.init();
@@ -2438,6 +2437,7 @@ window.App = (function () {
     coords.init();
     user.init();
     notification.init();
+    keybinds.init();
     // and here we finally go...
     board.start();
 
