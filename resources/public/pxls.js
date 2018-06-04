@@ -2477,6 +2477,9 @@ window.App = (function () {
                                 `<td>&times;</td>`
                          ]);
                         
+                        row.children()[1].addEventListener("input", (evt) => {
+                              self.userBinds[row.children()[0].children[0].value] = evt.target.value;
+                        });
                         row.children()[2].addEventListener("click", () => {
                                delete self.userBinds[row.children()[0].children[0].value];
                                 row.remove();
@@ -2489,7 +2492,11 @@ window.App = (function () {
                     table.append(`<tr><th>Keybind</th><th>Action</th><th>Delete</th></tr>`);
                     table.append(rows);
 
-                    alert.showElem(table);
+                    const divAlert = table.wrap(document.createElement("div"));
+
+                    divAlert.append(document.createElement("button"));
+
+                    alert.showElem(divAlert);
                 }
             };
 
