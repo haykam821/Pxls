@@ -57,6 +57,9 @@ tr > td:nth-child(3) {
     color: red;
     font-weight: 600;
 }
+tr > select {
+    width: 100%;
+}
 
 #reconnecting {
     position: fixed;

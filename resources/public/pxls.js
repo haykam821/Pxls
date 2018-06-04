@@ -2414,10 +2414,14 @@ window.App = (function () {
                     set(obj, prop, val) {
                         obj[prop] = val;
                         ls.set("binds", obj);
+                    },
+                    deleteProperty(obj, prop) {
+                        return delete obj[prop];
                     }
                 }),
                 init: function () {
                     $("#keybinds").click(self.showSetupAlert);
+                    self.showSetupAlert();
 
                     window.addEventListener("keydown", event => {
                         const bind = self.userBinds["Key" + event.keyCode];
@@ -2456,11 +2460,28 @@ window.App = (function () {
                         }
                     });
                 },
+                actionSelect: function (def) {
+                      const select = $(document.createElement("select"));
+                      select.append(Object.keys(self.actions).map(action => new Option(action, action)));
+                      select.value = def;
+
+                      return select;  
+                },
                 showSetupAlert: function () {
                     const rows = Object.keys(self.userBinds).map(key => {
                         const row = $(document.createElement("tr"));
-                        row.append(`<td><input type="text" placeholder="Default: ${key}" /></td> <td>${self.userBinds[key]}</td> <td>&times;</td>`);
+
+                        row.append([
+                                `<td><input type="text" value="${key}" placeholder="Default: ${key}" /></td>`,
+                                self.actionSelect(self.userBinds[key]).wrap(document.createElement("td")),
+                                `<td>&times;</td>`
+                         ]);
                         
+                        row.children()[2].addEventListener("click", () => {
+                               delete self.userBinds[row.children()[0].children[0].value];
+                                row.remove();
+                        });
+
                         return row;
                     });
 
