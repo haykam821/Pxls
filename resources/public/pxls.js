@@ -2407,11 +2407,20 @@ window.App = (function () {
                         "Button5": "zoomIn"
                     }
                 },
+                userBinds: new Proxy(ls.get("binds") || {}, {
+                    get(obj, prop) {
+                        return obj[prop] ? obj[prop] : self.binds.keyboard[prop];
+                    },
+                    set(obj, prop, val) {
+                        obj[prop] = val;
+                        ls.set("binds", obj);
+                    }
+                }),
                 init: function () {
                     $("#keybinds").click(self.showSetupAlert);
 
                     window.addEventListener("keydown", event => {
-                        const bind = self.binds.keyboard["Key" + event.keyCode];
+                        const bind = self.userBinds["Key" + event.keyCode];
                         if (bind && self.actions[bind]) {
                             self.actions[bind](event);
                         }
@@ -2448,8 +2457,8 @@ window.App = (function () {
                     });
                 },
                 showSetupAlert: function () {
-                    const rows = Object.keys(self.binds.keyboard).map(key => {
-                        return `<td><input type="text" placeholder="Default: ${key}" /></td> <td>${self.binds.keyboard[key]}</td> <td>&times;</td>`;
+                    const rows = Object.keys(self.userBinds).map(key => {
+                        return `<td><input type="text" placeholder="Default: ${key}" /></td> <td>${self.userBinds[key]}</td> <td>&times;</td>`;
                     });
 
                     alert.showElem(`
@@ -2471,7 +2480,8 @@ window.App = (function () {
             return {
                 init: self.init,
                 binds: self.binds,
-                setup: self.showSetupAlert
+                setup: self.showSetupAlert,
+                userBinds: self.userBinds,
             }
         })();
     // init progress
@@ -2500,6 +2510,7 @@ window.App = (function () {
         ls: ls,
         ss: ss,
         query: query,
+        binds: keybinds.userBinds,
         heatmap: {
             clear: heatmap.clear
         },
