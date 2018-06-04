@@ -2458,21 +2458,17 @@ window.App = (function () {
                 },
                 showSetupAlert: function () {
                     const rows = Object.keys(self.userBinds).map(key => {
-                        return `<td><input type="text" placeholder="Default: ${key}" /></td> <td>${self.userBinds[key]}</td> <td>&times;</td>`;
+                        const row = $(document.createElement("tr"));
+                        row.append(`<td><input type="text" placeholder="Default: ${key}" /></td> <td>${self.userBinds[key]}</td> <td>&times;</td>`);
+                        
+                        return row;
                     });
 
-                    alert.showElem(`
-                        <table>
-                            <tr>
-                                <th>Keybind</th>
-                                <th>Action</th>
-                                <th>Delete</th>
-                            </tr>
-                            <tr>
-                            ${rows.join("</tr><tr>")}
-                            </tr>
-                        </table>
-                    `);
+                    const table = $(document.createElement("table"));
+                    table.append(`<tr><th>Keybind</th><th>Action</th><th>Delete</th></tr>`);
+                    table.append(rows);
+
+                    alert.showElem(table);
                 }
             };
 
