@@ -709,6 +709,11 @@ window.App = (function () {
                     self.elements.board_render[0].addEventListener("touchmove", handleInputMove, {passive: false});
 
                     function handleInputDown(event) {
+                        if (event.which == 2 || event.button == 1) {
+                            // Get selected pixel color and change to it
+                            return;
+                        }
+
                         let clientX = 0,
                             clientY = 0,
                             prereq = true;
