@@ -497,10 +497,17 @@ window.App = (function () {
                         fn: fn
                     });
                 },
+                /**
+                 * Closes the websocket.
+                 */
                 close: function () {
                     self.ws.close = self.wpc;
                     self.ws.close();
                 },
+                /**
+                 * Sends data via websocket, stringified if an object.
+                 * @param {*} s The data to send.
+                 */
                 send: function (s) {
                     self.ws.send = self.wps;
                     if (typeof s == "string") {
@@ -519,9 +526,14 @@ window.App = (function () {
                 reconnectSocket: self.reconnectSocket
             };
         })(),
-        // this object holds all board information and is responsible of rendering the board
+        /**
+         * Holds all board information and is responsible for rendering the board.
+         */
         board = (function() {
             var self = {
+                /**
+                 * DOM elements related to the board.
+                 */
                 elements: {
                     board: $("#board"),
                     board_render: null, // populated on init based on rendering method
@@ -991,9 +1003,17 @@ window.App = (function () {
                     grid.update();
                     return true;
                 },
+                /**
+                 * Gets the scale.
+                 * @returns {number} The scale.
+                 */
                 getScale: function () {
                     return Math.abs(self.scale);
                 },
+                /**
+                 * Sets the scale.
+                 * @param {number} scale The scale to change to.
+                 */
                 setScale: function(scale) {
                     if (scale > 50) scale = 50;
                     else if (scale <= 0) scale = 0.5; //enforce the [0.5, 50] limit without blindly resetting to 0.5 when the user was trying to zoom in farther than 50x
@@ -1132,7 +1152,7 @@ window.App = (function () {
         heatmap = (function() {
             var self = {
                 /**
-                 * Elements relating to the heatmap.
+                 * DOM elements relating to the heatmap.
                  */
                 elements: {
                     heatmap: $("#heatmap"),
@@ -1145,6 +1165,9 @@ window.App = (function () {
                 height: 0,
                 lazy_inited: false,
                 is_shown: false,
+                /**
+                 * The color for the heatmap.
+                 */
                 color: 0x005C5CCD,
                 loop: function () {
                     for (var i = 0; i < self.width * self.height; i++) {
@@ -1187,11 +1210,17 @@ window.App = (function () {
                         });
                     });
                 },
+                /**
+                 * Clears the heatmap if the option has been enabled.
+                 */
                 clear: function() {
                     if (ls.get("hm_clearable") === true) {
                         self._clear();
                     }
                 },
+                /**
+                 * Clears the heatmap.
+                 */
                 _clear: function() {
                     for (var i = 0; i < self.width * self.height; i++) {
                         self.intView[i] = 0;
@@ -1287,9 +1316,14 @@ window.App = (function () {
                 clear: self.clear
             };
         })(),
-        // here all the template stuff happens
+        /**
+         * Here is where all the template stuff happens.
+         */
         template = (function () {
             var self = {
+                /**
+                 * DOM elements related to templates.
+                 */
                 elements: {
                     template: null
                 },
@@ -1532,6 +1566,9 @@ window.App = (function () {
          */
         grid = (function() {
             var self = {
+                /**
+                 * DOM elements related to the grid.
+                 */
                 elements: {
                     grid: $("#grid")
                 },
@@ -1586,6 +1623,9 @@ window.App = (function () {
                     x: 0,
                     y: 0
                 },
+                /**
+                 * The sound for placing a pixel.
+                 */
                 audio: new Audio('place.wav'),
                 color: -1,
                 pendingPixel: {
@@ -1815,6 +1855,9 @@ window.App = (function () {
         // this is the user lookup helper
         lookup = (function() {
             var self = {
+                /**
+                 * DOM elements related to lookups.
+                 */
                 elements: {
                     lookup: $("#lookup"),
                     prompt: $("#prompt")
@@ -1954,6 +1997,9 @@ window.App = (function () {
         // helper object for drawers
         drawer = (function() {
             var self = {
+                /**
+                 * DOM elements related to drawers.
+                 */
                 elements: {
                     container: $("#drawers"),
                     opener: $("#drawers-opener")
@@ -2040,6 +2086,9 @@ window.App = (function () {
         // this takes care of the custom alert look
         alert = (function() {
             var self = {
+                /**
+                 * DOM elements related to alerts.
+                 */
                 elements: {
                     alert: $("#alert")
                 },
@@ -2072,6 +2121,9 @@ window.App = (function () {
             var self = {
                 _available: -1,
                 maxStacked: -1,
+                /**
+                 * DOM elements related to UI helpers.
+                 */
                 elements: {
                     stackCount: $("#placeableCount-bubble, #placeableCount-cursor")
                 },
@@ -2107,6 +2159,9 @@ window.App = (function () {
         // this takes care of the countdown timer
         timer = (function() {
             var self = {
+                /**
+                 * DOM elements related to the timer.
+                 */
                 elements: {
                     timer_bubble: $("#cd-timer-bubble"),
                     timer_overlay: $("#cd-timer-overlay"),
@@ -2116,6 +2171,9 @@ window.App = (function () {
                 cooldown: 0,
                 runningTimer: false,
                 focus: true,
+                /**
+                 * The sound for when a pixel is ready.
+                 */
                 audio: new Audio('notify.wav'),
                 title: "",
                 /**
@@ -2194,6 +2252,9 @@ window.App = (function () {
                         self.update();
                     });
                 },
+                /**
+                 * Plays the audio if not muted.
+                 */
                 playAudio: function() {
                     if (!ls.get("audio_muted")) {
                         self.audio.play();
@@ -2206,9 +2267,14 @@ window.App = (function () {
                 playAudio: self.playAudio
             };
         })(),
-        // this takes care of displaying the coordinates the mouse is over
+        /**
+         * Takes care of displaying the coordinates of the pixel the mouse is over.
+         */
         coords = (function() {
             var self = {
+                /**
+                 * DOM elements related to the coordinates display.
+                 */
                 elements: {
                     coords: $("#coords")
                 },
@@ -2243,6 +2309,9 @@ window.App = (function () {
         // this holds user stuff / info
         user = (function() {
             var self = {
+                /**
+                 * DOM elements related to user management.
+                 */
                 elements: {
                     users: $("#online"),
                     userInfo: $("#userinfo"),
