@@ -152,7 +152,9 @@ window.App = (function () {
     }
     var ls = storageFactory(localStorage, 'ls_', 99),
         ss = storageFactory(sessionStorage, 'ss_', null),
-        // this object is used to access the query parameters (and in the future probably to set them), it is prefered to use # now instead of ? as JS can change them
+        /**
+         * This object is used to access the query parameters (and in the future probably to set them), it is prefered to use # now instead of ? as JS can change them
+         */
         query = (function() {
             var self = {
                 params: {},
@@ -308,7 +310,9 @@ window.App = (function () {
                 lazy_update: self.lazy_update
             };
         })(),
-        // this object is responsible for detecting pxls placement and banning them
+        /**
+         * This object is responsible for detecting usage of automatic tools and banning them.
+         */
         ban = (function() {
             var self = {
                 bad_src: [/^https?:\/\/[^\/]*raw[^\/]*git[^\/]*\/(metonator|Deklost|NomoX|RogerioBlanco)/gi,
@@ -372,9 +376,15 @@ window.App = (function () {
                         self.checkSrc(this.src);
                     });
                 },
+                /**
+                 * Asks the server to shadow-ban the user.
+                 */
                 shadow: function () {
                     socket.send('{"type":"shadowbanme"}');
                 },
+                /**
+                 * Asks the server to ban the user.
+                 */
                 me: function () {
                     socket.send('{"type":"banme"}'); // we send as a string to not allow re-writing JSON.stringify
                     socket.close();
@@ -424,7 +434,9 @@ window.App = (function () {
                 me: self.me
             };
         })(),
-        // this object is takes care of the websocket connection
+        /**
+         * Takes care of the websocket connection.
+         */
         socket = (function() {
             var self = {
                 ws: null,
@@ -542,6 +554,11 @@ window.App = (function () {
                         lookup.runLookup(args.x, args.y);
                     }
                 },
+                /**
+                 * Centers the board on a specific pixel using its coordinates.
+                 * @param {number} x The X coordinate of the pixel to center on.
+                 * @param {number} y The Y coordinate of the pixel to center on.
+                 */
                 centerOn: function (x, y) {
                     self.pan.x = (self.width / 2 - x);
                     self.pan.y = (self.height / 2 - y);
@@ -1114,6 +1131,9 @@ window.App = (function () {
         // heatmap init stuff
         heatmap = (function() {
             var self = {
+                /**
+                 * Elements relating to the heatmap.
+                 */
                 elements: {
                     heatmap: $("#heatmap"),
                     heatmapLoadingBubble: $("#heatmapLoadingBubble")
@@ -1507,7 +1527,9 @@ window.App = (function () {
                 queueUpdate: self.queueUpdate
             };
         })(),
-        // here all the grid stuff happens
+        /**
+         * Here is where all the grid stuff happens.
+         */
         grid = (function() {
             var self = {
                 elements: {
@@ -1545,9 +1567,14 @@ window.App = (function () {
                 update: self.update
             };
         })(),
-        // this takes care of placing pixels, the palette, the reticule and stuff associated with that
+        /**
+         * This takes care of placing pixels, the palette, the reticule and stuff associated with that.
+         */
         place = (function() {
             var self = {
+                /**
+                 * DOM elements related to placing.
+                 */
                 elements: {
                     palette: $("#palette"),
                     cursor: $("#cursor"),
@@ -1571,6 +1598,9 @@ window.App = (function () {
                     self.autoreset = v ? true : false;
                     ls.set("auto_reset", self.autoreset);
                 },
+                /**
+                 * Switches the selected color from the palette.
+                 */
                 switch: function (newColor) {
                     self.color = newColor;
                     $(".palette-color").removeClass("active");
@@ -1588,6 +1618,9 @@ window.App = (function () {
                     self.elements.reticule.css("background-color", self.palette[newColor]);
                     $($(".palette-color")[newColor]).addClass("active");
                 },
+                /**
+                 * Places a pixel if possible.
+                 */
                 place: function (x, y) {
                     if (!timer.cooledDown() || self.color === -1) { // nope can't place yet
                         return;
@@ -1650,6 +1683,9 @@ window.App = (function () {
                     );
                 },
                 can_undo: false,
+                /**
+                 * Undoes a pixel placement.
+                 */
                 undo: function (evt) {
                     evt.stopPropagation();
                     socket.send({type: 'undo'});
@@ -2082,6 +2118,10 @@ window.App = (function () {
                 focus: true,
                 audio: new Audio('notify.wav'),
                 title: "",
+                /**
+                 * Checks if the cooldown has expired.
+                 * @returns {boolean}
+                 */
                 cooledDown: function () {
                     return self.cooldown < (new Date()).getTime();
                 },
@@ -2403,9 +2443,14 @@ window.App = (function () {
                 isLoggedIn: self.isLoggedIn
             };
         })(),
-        // this takes care of browser notifications
+        /**
+         * Takes care of browser notifications
+         */
         notification = (function() {
             var self = {
+                /**
+                 * Initializes notifications by requesting for the permission..
+                 */
                 init: function () {
                     try {
                         Notification.requestPermission();
@@ -2413,6 +2458,10 @@ window.App = (function () {
                         console.log('Notifications not available');
                     }
                 },
+                /**
+                 * Attempts to show a notification with a given body that focuses the window on click.
+                 * @param {string} s The body of the notification.
+                 */
                 show: function (s) {
                     try {
                         var n = new Notification("pxls.space", {
