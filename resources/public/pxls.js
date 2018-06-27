@@ -160,7 +160,7 @@ window.App = (function () {
                 params: {},
                 initialized: false,
                 _trigger: function(propName, oldValue, newValue) {
-                    $(window).trigger("pxls:queryUpdated", [propName, oldValue, newValue]); //window.on("queryUpdated", (event, propName, oldValue, newValue) => {...});
+                    $(window).trigger("pxls:queryUpdated", [propName, oldValue, newValue]);
                     //this will cause issues if you're not paying attention. always check for `newValue` to be null in the event of a deleted key.
                 },
                 _update: function(fromEvent) {
@@ -186,7 +186,7 @@ window.App = (function () {
                                 let oldValue = self.params[key],
                                     newValue = vars[key] == null ? null : vars[key].toString();
                                 self.params[key] = newValue;
-                                self._trigger(key, oldValue, value); //if value == null || !value.length, shouldn't we be removing?
+                                self._trigger(key, oldValue, value);
                             } else {
                             }
                         } else if (!self.params.hasOwnProperty(key)) {
@@ -205,9 +205,6 @@ window.App = (function () {
                     }
                 },
                 setIfDifferent: function() {
-                    //setIfDifferent({oo: 0.3, template: "https://i.trg0d.com/gpq0786uCk4"}, [silent=false]);
-                    //setIfDifferent("template", "https://i.trg0d.com/gpq0786uCk4", [silent=false]);
-
                     let workWith = {},
                         silent = false;
                     if ((typeof arguments[0]) === "string") {
@@ -2285,9 +2282,6 @@ window.App = (function () {
                     _board.addEventListener("mousemove", pointerHandler, {passive: false});
                     _board.addEventListener("touchstart", touchHandler, {passive: false});
                     _board.addEventListener("touchmove", touchHandler, {passive: false});
-                    // board.getRenderBoard().on("pointermove mousemove", function (evt) {
-                    // }).on("touchstart touchmove", function (evt) {
-                    // });
 
                     function pointerHandler(evt) {
                         var boardPos = board.fromScreen(evt.clientX, evt.clientY);
@@ -2400,7 +2394,6 @@ window.App = (function () {
                             self.elements.signup.find("#error").text(data.responseJSON.message);
                         }
                     });
-                    // self.pendingSignupToken = null;
                 },
                 init: function () {
                     self.elements.userMessage.hide();
