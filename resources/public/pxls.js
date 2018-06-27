@@ -99,6 +99,10 @@ window.App = (function () {
                 return imgCanv.getContext('2d').getImageData(0, 0, w, h);
             }
         },
+        /**
+         * Calls the Google Analytics function if it exists.
+         * Prevents unnecessary errors if the user has an ad blocker.
+         */
         analytics = function () {
             if (window.ga) {
                 window.ga.apply(this, arguments);
@@ -146,22 +150,28 @@ window.App = (function () {
     } else if (desktop_safari) {
         have_image_rendering = false;
         have_zoom_rendering = true;
-    }
-    if (ms_edge) {
+    } else if (ms_edge) {
         have_image_rendering = false;
     }
     var ls = storageFactory(localStorage, 'ls_', 99),
         ss = storageFactory(sessionStorage, 'ss_', null),
         /**
-         * This object is used to access the query parameters (and in the future probably to set them), it is prefered to use # now instead of ? as JS can change them
+         * This object is used to access the query parameters (and in the future probably to set them).
+         * It is preferred to use # now instead of ? as JavaScript can change them.
          */
         query = (function() {
             var self = {
                 params: {},
                 initialized: false,
+                /**
+                 * Triggers a query update.
+                 * This will cause issues if you're not paying attention; always check for `newValue` to be null in the event of a deleted key.
+                 * @param {string} propName
+                 * @param {string} oldValue
+                 * @param {string} newValue
+                 */
                 _trigger: function(propName, oldValue, newValue) {
                     $(window).trigger("pxls:queryUpdated", [propName, oldValue, newValue]);
-                    //this will cause issues if you're not paying attention. always check for `newValue` to be null in the event of a deleted key.
                 },
                 _update: function(fromEvent) {
                     let toSplit = window.location.hash.substring(1);
@@ -316,6 +326,9 @@ window.App = (function () {
                         /^chrome\-extension:\/\/lmleofkkoohkbgjikogbpmnjmpdedfil/gi,
                         /^https?:\/\/.*mlpixel\.org/gi],
                 bad_events: ["mousedown", "mouseup", "click"],
+                /**
+                 * Shadow-bans if a source URL is from a known list of bad sources.
+                 */
                 checkSrc: function(src) {
                     // as naive as possible to make injection next to impossible
                     for (var i = 0; i < self.bad_src.length; i++) {
@@ -441,6 +454,9 @@ window.App = (function () {
                 hooks: [],
                 wps: WebSocket.prototype.send, // make sure we have backups of those....
                 wpc: WebSocket.prototype.close,
+                /**
+                 * Attempts to reconnect.
+                 */
                 reconnect: function () {
                     $("#reconnecting").show();
                     setTimeout(function () {
@@ -1114,6 +1130,9 @@ window.App = (function () {
                         y: boardY * self.scale + boardBox.top
                     };
                 },
+                /**
+                 * Downloads the current board as a PNG image.
+                 */
                 save: function () {
                     var a = document.createElement("a");
                     a.href = self.elements.board[0].toDataURL("image/png");
