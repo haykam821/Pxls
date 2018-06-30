@@ -96,6 +96,11 @@
                 ban_24h: function (username, fn) {
                     self.ban(username, 24*3600, fn);
                 },
+                /**
+                 * Unbans a user.
+                 * @param {string} username The user to unban.
+                 * @param {Function} fn The function to run after the unban.
+                 */
                 unban: function (username, fn) {
                     $.post("/admin/unban", {
                         username: username
@@ -122,9 +127,15 @@
                 elements: {
                     sheet: $("<link>", {rel: "stylesheet", href: "/admin/admin.css"})
                 },
+                /**
+                 * Adds the admin style sheet.
+                 */
                 init: function () {
                     self.elements.sheet.appendTo(document.head);
                 },
+                /**
+                 * Removes the admin style sheet.
+                 */
                 deinit: function () {
                     self.elements.sheet.remove();
                 }
@@ -139,6 +150,9 @@
                 elements: {
                     check: $("<div>").addClass("admin-check")
                 },
+                /**
+                 * Generates a pop-up based on a user check.
+                 */
                 callback: function (data) {
                     var delta = (data.banExpiry - (new Date()).getTime()) / 1000,
                         secs = Math.floor(delta % 60),
@@ -230,6 +244,9 @@
                 deinit: function () {
                     self.elements.check.remove();
                 },
+                /**
+                 * Attempts to check a user.
+                 */
                 check: function (username) {
                     $.post("/admin/check", {
                         username: username
@@ -360,6 +377,9 @@
                 deinit: self.deinit
             };
         })();
+    /**
+     * Initializes every module for the admin tools.
+     */
     window.initAdmin = function (_admin) {
         admin = _admin;
         ban.init();
@@ -368,6 +388,9 @@
         panel.init();
         lookup.init();
     };
+    /**
+     * Deinitializes every module for the admin tools.
+     */
     window.deInitAdmin = function () {
         ban.deinit();
         style.deinit();
