@@ -1791,7 +1791,6 @@ window.App = (function () {
         lookup = (function() {
             var self = {
                 elements: {
-                    lookup: $("#lookup"),
                     prompt: $("#prompt")
                 },
                 handle: null,
@@ -1834,7 +1833,6 @@ window.App = (function () {
                             }, function () {
                                 alert.show("Sent report!");
                                 self.elements.prompt.hide();
-                                self.elements.lookup.hide();
                             }).fail(function () {
                                 alert.show("Error sending report.");
                             })
@@ -1873,34 +1871,34 @@ window.App = (function () {
                     });
                 },
                 create: function (data) {
-                    self._makeShell(data).find(".content").first().append(function () {
-                        if (data) {
-                            return $.map(self.hooks, function (hook) {
-                                const get = hook.get(data);
-                                const value = typeof get === "object" ? get : $("<span>").text(get);
+                    alerts.create({
+                        type: "lookup",
+                        content: self._makeShell(data).find(".content").first().append(function () {
+                            if (data) {
+                                return $.map(self.hooks, function (hook) {
+                                    const get = hook.get(data);
+                                    const value = typeof get === "object" ? get : $("<span>").text(get);
 
-                                return $("<div>").append(
-                                    $("<b>").text(hook.name + ": "),
-                                    value.css(hook.css)
-                                ).attr("id", "lookuphook_" + hook.id);
-                            });
-                        } else {
-                            return $("<p>").text("This pixel is background (was not placed by a user).");
-                        }
+                                    return $("<div>").append(
+                                        $("<b>").text(hook.name + ": "),
+                                        value.css(hook.css)
+                                    ).attr("id", "lookuphook_" + hook.id);
+                                });
+                            } else {
+                                return $("<p>").text("This pixel is background (was not placed by a user).");
+                            }
+                        }),
+                        replace: true,
                     });
-                    self.elements.lookup.fadeIn(200);
                 },
                 _makeShell: function(data) {
-                    return self.elements.lookup.empty().append(
+                    return $("<div").append(
                         $("<div>").addClass("content"),
                         (data && user.isLoggedIn() ?
                             $("<div>").addClass("button").css("float", "left").addClass("report-button").text("Report").click(function () {
                                 self.report(data.id, data.x, data.y);
                             })
                         : ""),
-                        $("<div>").addClass("button").css("float", "right").text("Close").click(function () {
-                            self.elements.lookup.fadeOut(200);
-                        }),
                         (data && template.getOptions().use ? $("<div>").addClass("button").css("float", "right").text("Move Template Here").click(function () {
                             template.queueUpdate({
                                 ox: data.x,
@@ -1919,8 +1917,12 @@ window.App = (function () {
                             self.create(data);
                         }
                     }).fail(function () {
-                        self._makeShell(false).find(".content").first().append($("<p>").css("color", "#c00").text("An error occurred, you may be attempting to look up users too fast. Please try again in 60 seconds"));
-                        self.elements.lookup.fadeIn(200);
+                        alerts.create({
+                            type: "lookup",
+                            content: self._makeShell(false).find(".content").first().append($("<p>").css("color", "#c00").text("An error occurred, you may be attempting to look up users too fast. Please try again in 60 seconds")),
+                            color: "#c00",
+                            replace: true,
+                        });
                     });
                 },
                 init: function () {
@@ -1969,7 +1971,6 @@ window.App = (function () {
                         }
                     );
 
-                    self.elements.lookup.hide();
                     self.elements.prompt.hide();
                     board.getRenderBoard().on("click", function (evt) {
                         if (evt.shiftKey) {
@@ -2115,6 +2116,7 @@ window.App = (function () {
                 init: function () {
                     socket.on("alert", function (data) {
                         self.create({
+                            type: "serverAlert",
                             content: $("<span>").text(data.message),
                         });
                     });
