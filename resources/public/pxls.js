@@ -2084,31 +2084,45 @@ window.App = (function () {
         alert = (function() {
             var self = {
                 elements: {
-                    alert: $("#alert")
+                    alertStack: $("#alertStack"),
                 },
-                show: function (s) {
-                    self.elements.alert.find(".text,.custWrapper").empty();
-                    self.elements.alert.find(".text").append(s);
-                    self.elements.alert.fadeIn(200);
-                },
-                showElem: function(element) {
-                    self.elements.alert.find(".text,.custWrapper").empty();
-                    self.elements.alert.find(".custWrapper").append(element);
-                    self.elements.alert.fadeIn(200);
+                /**
+                 * Creates an alert and prepends it to the alert stack.
+                 * @param {Object} alert The alert to prepend to the alert stack.
+                 * @param alert.content The element to include as content of the alert.
+                 * @param {boolean} alert.replace If true, removes older alerts of the same type.
+                 * @param {string} alert.type The type of alert, used for custom CSS styling and replacing.
+                 * @param {string} [alert.color="#ccc"] The CSS color of the alert ring.
+                 */
+                create: alert => {
+                    const elem = $("<div>");
+
+                    elem.append(typeof alert.content === "string" ? $("<span>").text(alert.content) : alert.content);
+
+                    elem.addClass("alert");
+                    elem.css({
+                        borderColor: alert.color || "#ccc",
+                    });
+
+                    if (alert.replace) {
+                        self.elements.alertStack.children().filter(child => {
+                            console.log(child);
+                        })
+                    }
+
+                    return self.elements.alertStack.prepend(elem);
                 },
                 init: function () {
-                    self.elements.alert.hide().find(".button").click(function () {
-                        self.elements.alert.fadeOut(200);
-                    });
                     socket.on("alert", function (data) {
-                        self.show(data.message);
+                        self.create({
+                            content: $("<span>").text(data.message),
+                        });
                     });
                 }
             };
             return {
                 init: self.init,
-                show: self.show,
-                showElem: self.showElem
+                create: self.create,
             };
         })(),
         uiHelper = (function() {
@@ -2585,8 +2599,8 @@ window.App = (function () {
         updateTemplate: function(t) {
             template.queueUpdate(t);
         },
-        alert: function(s) {
-            alert.show($('<span>').text(s).html());
+        alert: function () {
+            return alert.create(...arguments);
         },
         doPlace: function() {
             ban.me();

@@ -116,17 +116,20 @@ a, a:hover, a:visited, a:active {
     border-radius: 3px;
 }
 
-#lookup {
-    top: 50px;
-    right: 16px;
+.alert {
     z-index: 9;
     border-radius: 8px;
     border: 1px solid #ccc;
     background-color: #eee;
     padding: 16px;
     max-width: 300px;
+    margin: 20px;
+}
 
+#alertStack {
     position: fixed;
+    top: 50px;
+    right: 16px;
 }
 
 #lookup .content > div:not(:first-of-type) {
