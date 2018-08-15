@@ -28,6 +28,59 @@
     </div>
 </div>
 
+<div id="sidebar">
+	<div id="quick">
+		<button id="openSidebar">
+			Pxls
+		</button>
+        <div id="palette">
+            <div id="cd-timer-overlay" class="palette-overlay"></div>
+		</div>
+		<div id="info"></div>
+	</div>
+	<div id="expanded">
+		<h1>Pxls</h1>
+		<div>
+			{{info}}
+		</div>
+		<expander header="Account">
+			<p>
+				You are signed in as <span class="name"></span>.
+			</p>
+			<a href="logout">Sign Out</a>
+		</expander>
+		<expander header="Pixel Alerts">
+			<p class="alertLocationWrapper"><label for="txtAlertLocation">Alert URL:</label><input type="text" placeholder="notify.wav" id="txtAlertLocation"></p>
+                <div class="ButtonBar">
+                    <button id="btnForceAudioUpdate" class="button">Update</button>
+                    <button id="btnAlertAudioTest" class="button">Test</button>
+                    <button id="btnAlertReset" class="button">Reset</button>
+                </div>
+                <div>
+                    <label for="rangeAlertVolume">Volume:</label>
+                    <input type="range" id="rangeAlertVolume" min=0 max=1 step=".01" value=1>
+                    <span id="lblAlertVolume"></span>
+                </div>
+		</expander>
+		<expander header="Templates">
+            <p>
+				To move a template, drag it while holding <kbd>Ctrl</kbd> or by shift-clicking a pixel and clicking <kbd>Move Template Here</kbd>.
+			</p>
+			<ul>
+				<li>
+					<label>Use template: <input type="checkbox" id="template-use"> (Also toggled with T)</label>
+				</li>
+				<li>
+					<label>URL: <input type="text" id="template-url"></label>
+				</li>
+				<li>
+					<label>Opacity: <input type="range" min="0" max="1" step="0.01" id="template-opacity"></label>
+				</li>
+			</ul>
+		</expander>
+	</div>
+</div> 
+
 <div id="drawers">
     <div id="info" class="drawer">
         <div class="drawer-content">
@@ -82,27 +135,6 @@
                     <p>V - Toggle visibility</p>
                 </div>
             </div>
-            <div>
-                <h1>Template control</h1>
-                <p>Hold down ctrl to drag the template around</p>
-                <p><label>Use template: <input type="checkbox" id="template-use"></label></p>
-                <p><label>URL: <input type="text" id="template-url"></label></p>
-                <p><label>Opacity: <input type="range" min="0" max="1" step="0.01" id="template-opacity"></label></p>
-            </div>
-            <div>
-                <h1>Pixel Ready alert settings</h1>
-                <p class="alertLocationWrapper"><label for="txtAlertLocation">Alert URL:</label><input type="text" placeholder="notify.wav" id="txtAlertLocation"></p>
-                <div class="ButtonBar">
-                    <button id="btnForceAudioUpdate" class="button">Update</button>
-                    <button id="btnAlertAudioTest" class="button">Test</button>
-                    <button id="btnAlertReset" class="button">Reset</button>
-                </div>
-                <div>
-                    <label for="rangeAlertVolume">Volume:</label>
-                    <input type="range" id="rangeAlertVolume" min=0 max=1 step=".01" value=1>
-                    <span id="lblAlertVolume"></span>
-                </div>
-            </div>
         </div>
         <div class="open">settings</div>
     </div>
@@ -121,9 +153,6 @@
             You are not signed in. <a href="#">Sign in with...</a>
         </div>
         <div id="user-message" class="palette-overlay"></div>
-        <div id="palette">
-            <div id="cd-timer-overlay" class="palette-overlay"></div>
-        </div>
     </div>
 
     <div class="left">
@@ -133,7 +162,6 @@
         <div id="placeableInfoBubble" class="bubble">Pixels available: <span id="placeableCount-bubble">0/0</span></div>
     </div>
     <div class="right">
-        <div id="userinfo" class="bubble"><span class="name"></span> <a href="/logout" class="logout">logout</a></div>
         <div id="online" class="bubble"></div>
     </div>
 </div>
